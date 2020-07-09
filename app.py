@@ -1,4 +1,4 @@
-import dash
+from dash import Dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Output, Input
@@ -22,23 +22,50 @@ external_stylesheets = [
     }
 ]
 
-app = dash.Dash(__name__,
-                external_stylesheets=external_stylesheets)
+app = Dash(__name__,
+                external_stylesheets=external_stylesheets,
+                meta_tags=[
+                        {"name": "viewport", "content": "width=device-width, initial-scale=1,shrink-to-fit=no"}
+                ]
+
+            )
 
 #server = app.server
 
 app.layout = html.Div([
     html.Div([
-        html.H2('Dashboard Covid-19 - Unifesspa'),
-        html.Img(src='/assets/LCC.png')
-    ], className='banner'),
+        html.Div([
+            html.H2('Dashboard Covid-19 - Unifesspa')
+        ],className='col', style={'align-items':'center','margin-top':'6em'}),
+        html.Div([
+            html.Img(src='/assets/LCC.png',style={'width':'100%','max-width': '400px','height': 'auto', 'float':'right'})
+        ],className='col')
+    ],
+        style={
+                'position':'relative',
+                'display': 'flex',
+                'padding':'1em 1em 1em 1em'
+                }
+    ),
 
     dcc.Tabs([
         dcc.Tab(label='Casos confirmados e Óbitos', children=[
             html.Div([
                 html.Div([
-                    html.H3('Escolha o município'),
-                    dcc.Dropdown(
+                    html.Div([
+                        html.H3('Escolha o município', style={'padding':'2px 1em 0 1em'})
+                    ]),
+
+                ],className='row',
+                    style={
+                        'justify-content': 'center',
+                        'display': 'flex',
+                        'align-items':'center'
+
+                    }
+                ),
+                html.Div([
+                        dcc.Dropdown(
                         id='dropdown_mun',
                         options=[
                             {'label': 'Marabá', 'value': 'Marabá'},
@@ -50,35 +77,45 @@ app.layout = html.Div([
                         value='Marabá',
                         multi=False,
                         clearable=False,
-                        style={'width': '80%', 'font-size': '14px'}
+                        style={'width': '100%', 'font-size': '14px'}
                     )
-                ], className='offset-by-one column, three columns')
-            ], className='row'),
-            html.Div([
+                    ]),
+
                 html.Div([
-                    dcc.Graph(
-                        id='mun_conf'
-                    )
-                ], className='six columns'),
+                        html.Div([
+                            dcc.Graph(
+                                id='mun_conf',
+                                responsive='true'
+                            )
+                        ], className='col-sm'),
+                        html.Div([
+                            dcc.Graph(
+                                id='mun_death',
+                                responsive='true'
+                            )
+                        ],className='col-sm' )
+                ], className='row'),
                 html.Div([
-                    dcc.Graph(
-                        id='mun_death',
-                    )
-                ], className='six columns')
-            ], className='row'),
-            html.Div([
-                html.Div([
-                    dcc.Graph(
-                        id='mun_conf2'
-                    )
-                ], className='six columns'),
-                html.Div([
-                    dcc.Graph(
-                        id='mun_death2',
-                    )
-                ], className='six columns')
-            ], className='row')
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_conf2', responsive='true'
+                        )
+                    ], className='col-sm'),
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_death2', responsive='true'
+                        )
+                    ], className='col-sm')
+                ], className='row')
+            ],className='container-sm'),
         ]),
+
+
+
+
+
+
+
         dcc.Tab(label='Previsão confirmados - Marabá', children=[
             html.Div([
                 html.Div([
@@ -116,6 +153,10 @@ app.layout = html.Div([
                 ], className='five columns')
             ], className='row'),
         ]),
+
+
+
+
         dcc.Tab(label='Previsão óbitos - Marabá', children=[
             html.Div([
                 html.Div([
@@ -153,8 +194,8 @@ app.layout = html.Div([
                 ], className='five columns')
             ], className='row'),
         ]),
-    ], style={'font-size': '14px'})
-])
+    ], style={'font-size': '14px'}, className='table table-striped')
+], className='container-sm')
 
 #--------------------------------------------------------------------------
 @app.callback(
@@ -417,7 +458,7 @@ def update_graph_prev_conf(dropdown_prev_conf):
         title='Previsão confirmados',
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         ),
@@ -502,7 +543,7 @@ def update_graph_prev_conf(dropdown_prev_conf):
     layout = dict(
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         )
@@ -615,7 +656,7 @@ def update_graph_prev_death(dropdown_prev_death):
         title='Previsão óbitos',
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         ),
@@ -700,7 +741,7 @@ def update_graph_prev_death(dropdown_prev_death):
     layout = dict(
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         )
@@ -716,7 +757,7 @@ def update_graph_prev_death(dropdown_prev_death):
     props['xaxis'].pop('type')
     layout = go.Layout(
         #width=figsize[0],
-        height=700,
+        #height=700,
         showlegend=False,
         xaxis=props['xaxis'],
         yaxis=dict(title='Sazonalidade')
@@ -730,4 +771,4 @@ def update_graph_prev_death(dropdown_prev_death):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()
