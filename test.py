@@ -1,66 +1,22 @@
-from dash import Dash
-import dash_bootstrap_components as dbc
-import dash_html_components as html
-app = Dash(
-    external_stylesheets=[dbc.themes.BOOTSTRAP]
-)
+import requests
+import pandas as pd
+import json
 
-email_input = dbc.FormGroup(
-    [
-        dbc.Label("Email", html_for="example-email-row", width=2),
-        dbc.Col(
-            dbc.Input(
-                type="email", id="example-email-row", placeholder="Enter email"
-            ),
-            width=10,
-        ),
-    ],
-    row=True,
-)
+url = 'https://brasil.io/api/dataset/covid19/caso/data/?city=' + 'Marabá' + '&format=json'
+url_data = requests.get(url).content
+json_data = json.loads(url_data)
+df = pd.read_json(json.dumps(json_data['results']))
+df_new = df.sort_values(by='date')
+print(df_new.columns)
 
-password_input = dbc.FormGroup(
-    [
-        dbc.Label("Password", html_for="example-password-row", width=2),
-        dbc.Col(
-            dbc.Input(
-                type="password",
-                id="example-password-row",
-                placeholder="Enter password",
-            ),
-            width=10,
-        ),
-    ],
-    row=True,
-)
+date=df_new['date'][0]
+confirmed=df_new['confirmed'][0]
+confirmed_per_100k=df_new['confirmed_per_100k_inhabitants'][0]
+death_rate=df_new['death_rate'][0]
+deaths=df_new['deaths'][0]
 
-radios_input = dbc.FormGroup(
-    [
-        dbc.Label("Radios", html_for="example-radios-row", width=2),
-        dbc.Col(
-            dbc.RadioItems(
-                id="example-radios-row",
-                options=[
-                    {"label": "First radio", "value": 1},
-                    {"label": "Second radio", "value": 2},
-                    {
-                        "label": "Third disabled radio",
-                        "value": 3,
-                        "disabled": True,
-                    },
-                ],
-            ),
-            width=10,
-        ),
-    ],
-    row=True,
-)
-app.layout = dbc.Container(
-    html.Div(
-        dbc.Form([email_input, password_input, radios_input])
-    )
-)
-
-
-
-if __name__ == "__main__":
-    app.run_server(debug=True)
+print(date)
+print(confirmed)
+print(confirmed_per_100k)
+print(deaths)
+print(death_rate)
