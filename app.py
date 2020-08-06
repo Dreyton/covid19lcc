@@ -80,55 +80,40 @@ app.layout = html.Div([
                         style={'width': '100%', 'font-size': '14px'}
                     )
                     ]),
-                html.Div(
-                    [
-                        html.Br(),
-                        html.Br(),
-                        dbc.Row(
-                            [
-                                dbc.Col(dbc.Card([
-                                    dbc.CardHeader("Casos confirmados"),
-                                        dbc.CardBody([
-                                                html.H5("Card title",id='confirmed', className="card-title")
-                                        ]),
-                                ], color="primary", inverse=True)),
-                                dbc.Col(
-                                    dbc.Card([
-                                        dbc.CardHeader("Número de óbitos"),
-                                        dbc.CardBody([
-                                            html.H5("Card title", id='deaths', className="card-title")
-                                        ])], color="secondary", inverse=True)
-                                ),
-                                dbc.Col(dbc.Card([
-                                    dbc.CardHeader("Casos confirmados por 100k habitantes"),
-                                        dbc.CardBody([
-                                                html.H5("Card title",id='confirmed_per_100k', className="card-title")
-                                        ]),
-                                ], color="info", inverse=True)),
-                            ],
-                            className="mb-4",
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(dbc.Card([
-                                    dbc.CardHeader("Taxa de óbitos"),
-                                        dbc.CardBody([
-                                                html.H5("Card title",id='death_rate', className="card-title")
-                                        ]),
-                                ], color="success", inverse=True)),
-                                dbc.Col(dbc.Card([
-                                    dbc.CardHeader("Data"),
-                                        dbc.CardBody([
-                                                html.H5("Card title",id='date', className="card-title")
-                                        ]),
-                                ], color="warning", inverse=True))
-                            ],
-                            className="mb-4",
-                        ),
-
-                    ]
-                )
-
+                html.Div([
+                    html.Div([
+                        dbc.Card([
+                        dbc.CardHeader('Total Casos'),
+                            dbc.CardBody([
+                                html.H5("Card title",id='confirmed', className="card-title"),
+                            ])
+                        ],color="primary", inverse=True, style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Número de óbitos'),
+                                dbc.CardBody([
+                                    html.H5("Card title", id='deaths', className="card-title")
+                                ])
+                        ], color="secondary", inverse=True, style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Casos confirmados por 100k habitantes'),
+                                dbc.CardBody([
+                                html.H5("Card title",id='confirmed_per_100k', className="card-title")
+                            ])
+                        ],color="info", inverse=True, style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Taxa de óbitos'),
+                            dbc.CardBody([
+                                html.H5("Card title",id='death_rate', className="card-title")
+                            ])
+                        ],color="success", inverse=True ,style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Data'),
+                            dbc.CardBody([
+                                html.H5("Card title",id='date', className="card-title")
+                            ])
+                        ],color="warning", inverse=True,style={"width": "18rem"}, className='cell')
+                    ], className='grid')
+                ], className='row' ),
             ],className='container-sm',style={
                         'padding':'1em 1em 1em 1em'
             })

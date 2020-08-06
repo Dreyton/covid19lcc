@@ -19,22 +19,18 @@
     height: 75px;
 }
 
-.container {
-    margin: 10px auto;
-    max-width: 1200px;
-    padding: 0 1rem;
-    justify-content: center;
-    align-items: center
-}
+
 .grid {
-    text-align: center;
+   
     display: flex; /* or inline-flex */
     flex-wrap: wrap;
     flex-direction: row;
-
+    justify-content:space-around;
+    width: 100%;
   }
 
 .cell{
+    text-align: center;
     display: block;
     margin: 1rem;
 }
