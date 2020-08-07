@@ -48,18 +48,12 @@ app = Dash(__name__,
 app.layout = html.Div([
     html.Div([
         html.Div([
-            html.H2('Dashboard Covid-19 - Unifesspa')
-        ],className='col', style={'align-items':'center','margin-top':'6em'}),
+            html.H1('Dashboard Covid-19 - Unifesspa')
+        ],className='title col'),
         html.Div([
-            html.Img(src='/assets/LCC.png',style={'width':'100%','max-width': '400px','height': 'auto', 'float':'right'})
-        ],className='col')
-    ],
-        style={
-                'position':'relative',
-                'display': 'flex',
-                'padding':'1em 1em 1em 1em'
-                }
-    ),
+            html.Img(src='/assets/LCC.png')
+        ],className='logo col')
+    ],className='banner'),
 
     dcc.Tabs([
         dcc.Tab(label="Situação atual", children=[
