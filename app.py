@@ -56,24 +56,33 @@ app.layout = html.Div([
     ],className='banner'),
 
     dcc.Tabs([
-        dcc.Tab(label="Situação atual", children=[
+    
+        dcc.Tab(label='Casos confirmados e Óbitos', children=[
             html.Div([
                 html.Div([
-                        dcc.Dropdown(
-                        id='dropdown_mun2',
-                        options=[
-                            {'label': 'Marabá', 'value': 'Marabá'},
-                            {'label': 'Xinguara', 'value': 'Xinguara'},
-                            {'label': 'Rondon do Pará', 'value': 'Rondon do Pará'},
-                            {'label': 'Santana do Araguaia', 'value': 'Santana do Araguaia'},
-                            {'label': 'São Félix do Xingu', 'value': 'São Félix do Xingu'}
-                        ],
-                        value='Marabá',
-                        multi=False,
-                        clearable=False,
-                        style={'width': '100%', 'font-size': '14px'}
-                    )
-                    ]),
+                    html.Div([
+                        html.H3('Escolha o município'),
+                            dcc.Dropdown(
+                            id='dropdown_mun',
+                            options=[
+                                {'label': 'Marabá', 'value': 'Marabá'},
+                                {'label': 'Xinguara', 'value': 'Xinguara'},
+                                {'label': 'Rondon do Pará', 'value': 'Rondon do Pará'},
+                                {'label': 'Santana do Araguaia', 'value': 'Santana do Araguaia'},
+                                {'label': 'São Félix do Xingu', 'value': 'São Félix do Xingu'}
+                            ],
+                            value='Marabá',
+                            multi=False,
+                            clearable=False,
+                            style={'width': '100%', 'font-size': '14px'}
+                        )
+                    ])
+                ], className='row',style={
+                        'justify-content': 'center',
+                        'display': 'flex',
+                        'align-items':'center'
+
+                }),
                 html.Div([
                     html.Div([
                         dbc.Card([
@@ -108,42 +117,6 @@ app.layout = html.Div([
                         ],color="warning", inverse=True,style={"width": "18rem"}, className='cell')
                     ], className='grid')
                 ], className='row' ),
-            ],className='container-sm',style={
-                        'padding':'1em 1em 1em 1em'
-            })
-        ]),
-        dcc.Tab(label='Casos confirmados e Óbitos', children=[
-            html.Div([
-                html.Div([
-                    html.Div([
-                        html.H3('Escolha o município', style={'padding':'2px 1em 0 1em'})
-                    ]),
-
-                ],className='row',
-                    style={
-                        'justify-content': 'center',
-                        'display': 'flex',
-                        'align-items':'center'
-
-                    }
-                ),
-                html.Div([
-                        dcc.Dropdown(
-                        id='dropdown_mun',
-                        options=[
-                            {'label': 'Marabá', 'value': 'Marabá'},
-                            {'label': 'Xinguara', 'value': 'Xinguara'},
-                            {'label': 'Rondon do Pará', 'value': 'Rondon do Pará'},
-                            {'label': 'Santana do Araguaia', 'value': 'Santana do Araguaia'},
-                            {'label': 'São Félix do Xingu', 'value': 'São Félix do Xingu'}
-                        ],
-                        value='Marabá',
-                        multi=False,
-                        clearable=False,
-                        style={'width': '100%', 'font-size': '14px'}
-                    )
-                    ]),
-
                 html.Div([
                         html.Div([
                             dcc.Graph(
@@ -195,7 +168,7 @@ app.layout = html.Div([
                         'display': 'flex',
                         'align-items':'center'
 
-                    }),
+                }),
                 html.Div([
                     html.Div([
                         dcc.Graph(
@@ -278,19 +251,17 @@ app.layout = html.Div([
     Output(component_id='confirmed_per_100k', component_property='children'),
     Output(component_id='death_rate', component_property='children'),
     Output(component_id='date', component_property='children')],
-    [Input(component_id='dropdown_mun2', component_property='value')]
+    [Input(component_id='dropdown_mun', component_property='value')]
     #Output(component_id='mun_conf2', component_property='value'),
     #Output(component_id='mun_death2', component_property='value')],
 
 )
-def situation(dropdown_mun2):
-    print(dropdown_mun2)
-    url = 'https://brasil.io/api/dataset/covid19/caso/data/?city=' + dropdown_mun2 + '&format=json'
+def situation(dropdown_mun):
+    url = 'https://brasil.io/api/dataset/covid19/caso/data/?city=' + dropdown_mun + '&format=json'
     url_data = requests.get(url).content
     json_data = json.loads(url_data)
     df = pd.read_json(json.dumps(json_data['results']))
     df_new = df.sort_values(by='date')
-    print(df_new.columns)
 
     date = df_new['date'][0]
     confirmed = df_new['confirmed'][0]
