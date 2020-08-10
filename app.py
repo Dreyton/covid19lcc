@@ -1,4 +1,5 @@
-import dash
+from dash import Dash
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Output, Input
@@ -11,6 +12,18 @@ from fbprophet.plot import get_forecast_component_plotly_props
 from fbprophet.plot import get_seasonality_plotly_props
 import numpy as np
 
+card_content = [
+    dbc.CardHeader("Card header"),
+    dbc.CardBody(
+        [
+            html.H5("Card title", className="card-title"),
+            html.P(
+                "This is some card content that we'll reuse",
+                className="card-text",
+            ),
+        ]
+    ),
+]
 # external CSS stylesheets
 external_stylesheets = [
     'https://codepen.io/chriddyp/pen/bWLwgP.css',
@@ -22,140 +35,242 @@ external_stylesheets = [
     }
 ]
 
-app = dash.Dash(__name__,
-                external_stylesheets=external_stylesheets)
+app = Dash(__name__,
+                external_stylesheets=external_stylesheets,
+                meta_tags=[
+                        {"name": "viewport", "content": "width=device-width, initial-scale=1,shrink-to-fit=no"}
+                ]
+
+            )
 
 #server = app.server
 
 app.layout = html.Div([
     html.Div([
-        html.H2('Dashboard Covid-19 - Unifesspa'),
-        html.Img(src='/assets/LCC.png')
-    ], className='banner'),
+        html.Div([
+            html.H1('Dashboard Covid-19 - Unifesspa')
+        ],className='title col'),
+        html.Div([
+            html.Img(src='/assets/LCC.png')
+        ],className='logo col')
+    ],className='banner'),
 
     dcc.Tabs([
+    
         dcc.Tab(label='Casos confirmados e Óbitos', children=[
             html.Div([
                 html.Div([
-                    html.H3('Escolha o município'),
-                    dcc.Dropdown(
-                        id='dropdown_mun',
-                        options=[
-                            {'label': 'Marabá', 'value': 'Marabá'},
-                            {'label': 'Xinguara', 'value': 'Xinguara'},
-                            {'label': 'Rondon do Pará', 'value': 'Rondon do Pará'},
-                            {'label': 'Santana do Araguaia', 'value': 'Santana do Araguaia'},
-                            {'label': 'São Félix do Xingu', 'value': 'São Félix do Xingu'}
-                        ],
-                        value='Marabá',
-                        multi=False,
-                        clearable=False,
-                        style={'width': '80%', 'font-size': '14px'}
-                    )
-                ], className='offset-by-one column, three columns')
-            ], className='row'),
-            html.Div([
+                    html.Div([
+                        html.H3('Escolha o município'),
+                            dcc.Dropdown(
+                            id='dropdown_mun',
+                            options=[
+                                {'label': 'Marabá', 'value': 'Marabá'},
+                                {'label': 'Xinguara', 'value': 'Xinguara'},
+                                {'label': 'Rondon do Pará', 'value': 'Rondon do Pará'},
+                                {'label': 'Santana do Araguaia', 'value': 'Santana do Araguaia'},
+                                {'label': 'São Félix do Xingu', 'value': 'São Félix do Xingu'}
+                            ],
+                            value='Marabá',
+                            multi=False,
+                            clearable=False,
+                            style={'width': '100%', 'font-size': '14px'}
+                        )
+                    ])
+                ], className='row',style={
+                        'justify-content': 'center',
+                        'display': 'flex',
+                        'align-items':'center'
+
+                }),
                 html.Div([
-                    dcc.Graph(
-                        id='mun_conf'
-                    )
-                ], className='six columns'),
+                    html.Div([
+                        dbc.Card([
+                        dbc.CardHeader('Total Casos'),
+                            dbc.CardBody([
+                                html.H5("Card title",id='confirmed', className="card-title"),
+                            ])
+                        ],color="primary", inverse=True, style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Número de óbitos'),
+                                dbc.CardBody([
+                                    html.H5("Card title", id='deaths', className="card-title")
+                                ])
+                        ], color="secondary", inverse=True, style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Casos confirmados por 100k habitantes'),
+                                dbc.CardBody([
+                                html.H5("Card title",id='confirmed_per_100k', className="card-title")
+                            ])
+                        ],color="info", inverse=True, style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Taxa de óbitos'),
+                            dbc.CardBody([
+                                html.H5("Card title",id='death_rate', className="card-title")
+                            ])
+                        ],color="success", inverse=True ,style={"width": "18rem"}, className='cell'),
+                        dbc.Card([
+                            dbc.CardHeader('Data'),
+                            dbc.CardBody([
+                                html.H5("Card title",id='date', className="card-title")
+                            ])
+                        ],color="warning", inverse=True,style={"width": "18rem"}, className='cell')
+                    ], className='grid')
+                ], className='row' ),
                 html.Div([
-                    dcc.Graph(
-                        id='mun_death',
-                    )
-                ], className='six columns')
-            ], className='row'),
-            html.Div([
+                        html.Div([
+                            dcc.Graph(
+                                id='mun_conf',
+                                responsive='true'
+                            )
+                        ], className='col-sm'),
+                        html.Div([
+                            dcc.Graph(
+                                id='mun_death',
+                                responsive='true'
+                            )
+                        ],className='col-sm' )
+                ], className='row'),
                 html.Div([
-                    dcc.Graph(
-                        id='mun_conf2'
-                    )
-                ], className='six columns'),
-                html.Div([
-                    dcc.Graph(
-                        id='mun_death2',
-                    )
-                ], className='six columns')
-            ], className='row')
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_conf2', responsive='true'
+                        )
+                    ], className='col-sm'),
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_death2', responsive='true'
+                        )
+                    ], className='col-sm')
+                ], className='row')
+            ],className='container-sm'),
         ]),
+
         dcc.Tab(label='Previsão confirmados - Marabá', children=[
             html.Div([
                 html.Div([
-                    html.H3('Escolha o período'),
-                    dcc.Dropdown(
-                        id='dropdown_prev_conf',
-                        options=[
-                            {'label': '1 semana', 'value': 7},
-                            {'label': '2 semanas', 'value': 14}
-                        ],
-                        value=7,
-                        multi=False,
-                        clearable=False,
-                        style={'width': '80%', 'font-size': '14px'}
-                    )
-                ], className='offset-by-one column, three columns')
-            ], className='row'),
-            html.Div([
+                    html.Div([
+                        html.H3('Escolha o período'),
+                        dcc.Dropdown(
+                            id='dropdown_prev_conf',
+                            options=[
+                                {'label': '1 semana', 'value': 7},
+                                {'label': '2 semanas', 'value': 14}
+                            ],
+                            value=7,
+                            multi=False,
+                            clearable=False,
+                            style={'width': '100%', 'font-size': '14px'}
+                        )
+                    ])
+                ], className='row',style={
+                        'justify-content': 'center',
+                        'display': 'flex',
+                        'align-items':'center'
+
+                }),
                 html.Div([
-                    dcc.Graph(
-                        id='mun_prev_conf'
-                    )
-                ], className='offset-by-one column, ten columns')
-            ], className='row'),
-            html.Div([
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_prev_conf',responsive='true'
+                        )
+                    ], className='col-sm')
+                ], className='row'),
                 html.Div([
-                    dcc.Graph(
-                        id='mun_trend_conf'
-                    )
-                ], className='offset-by-one column, five columns'),
-                html.Div([
-                    dcc.Graph(
-                        id='mun_saz_conf',
-                    )
-                ], className='five columns')
-            ], className='row'),
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_trend_conf',responsive='true'
+                        )
+                    ], className='col-sm'),
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_saz_conf',responsive='true'
+                        )
+                    ], className='col-sm')
+                ], className='row'),
+            ],className='container-sm')
         ]),
+
+
+
+
         dcc.Tab(label='Previsão óbitos - Marabá', children=[
             html.Div([
                 html.Div([
-                    html.H3('Escolha o período'),
-                    dcc.Dropdown(
-                        id='dropdown_prev_death',
-                        options=[
-                            {'label': '1 semana', 'value': 7},
-                            {'label': '2 semanas', 'value': 14}
-                        ],
-                        value=7,
-                        multi=False,
-                        clearable=False,
-                        style={'width': '80%', 'font-size': '14px'}
-                    )
-                ], className='offset-by-one column, three columns')
-            ], className='row'),
-            html.Div([
-                html.Div([
-                    dcc.Graph(
-                        id='mun_prev_death'
-                    )
-                ], className='offset-by-one column, ten columns')
-            ], className='row'),
-            html.Div([
-                html.Div([
-                    dcc.Graph(
-                        id='mun_trend_death'
-                    )
-                ], className='offset-by-one column, five columns'),
-                html.Div([
-                    dcc.Graph(
-                        id='mun_saz_death',
-                    )
-                ], className='five columns')
-            ], className='row'),
-        ]),
-    ], style={'font-size': '14px'})
-])
+                    html.Div([
+                        html.H3('Escolha o período'),
+                        dcc.Dropdown(
+                            id='dropdown_prev_death',
+                            options=[
+                                {'label': '1 semana', 'value': 7},
+                                {'label': '2 semanas', 'value': 14}
+                            ],
+                            value=7,
+                            multi=False,
+                            clearable=False,
+                            style={'width': '100%', 'font-size': '14px'}
+                        )
+                    ])
+                ], className='row',style={
+                        'justify-content': 'center',
+                        'display': 'flex',
+                        'align-items':'center'
 
+                    }),
+                html.Div([
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_prev_death',
+                            responsive='true'
+                        )
+                    ], className='col-sm')
+                ], className='row'),
+                html.Div([
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_trend_death',responsive='true'
+                        )
+                    ], className='col-sm'),
+                    html.Div([
+                        dcc.Graph(
+                            id='mun_saz_death',responsive='true'
+                        )
+                    ], className='col-sm')
+                ], className='row'),
+            ], className='container-sm')
+
+        ]),
+    ], style={'font-size': '14px'}, className='table table-striped')
+], className='container-sm')
+
+
+#---------------------------------------------------------------------------------
+@app.callback(
+    [Output(component_id='confirmed', component_property='children'),
+    Output(component_id='deaths', component_property='children'),
+    Output(component_id='confirmed_per_100k', component_property='children'),
+    Output(component_id='death_rate', component_property='children'),
+    Output(component_id='date', component_property='children')],
+    [Input(component_id='dropdown_mun', component_property='value')]
+    #Output(component_id='mun_conf2', component_property='value'),
+    #Output(component_id='mun_death2', component_property='value')],
+
+)
+def situation(dropdown_mun):
+    url = 'https://brasil.io/api/dataset/covid19/caso/data/?city=' + dropdown_mun + '&format=json'
+    url_data = requests.get(url).content
+    json_data = json.loads(url_data)
+    df = pd.read_json(json.dumps(json_data['results']))
+    df_new = df.sort_values(by='date')
+
+    date = df_new['date'][0]
+    confirmed = df_new['confirmed'][0]
+    confirmed_per_100k = df_new['confirmed_per_100k_inhabitants'][0]
+    death_rate = df_new['death_rate'][0]
+    deaths = df_new['deaths'][0]
+    return confirmed,deaths,confirmed_per_100k,death_rate,date
+    #confirmed_per_100k,death_rate,deaths,date,date
+# --------------------------------------------------------------------------
 #--------------------------------------------------------------------------
 @app.callback(
     [Output(component_id='mun_conf', component_property='figure'),
@@ -164,7 +279,7 @@ app.layout = html.Div([
     Output(component_id='mun_death2', component_property='figure')],
     [Input(component_id='dropdown_mun', component_property='value')]
 )
-
+# ---------------------------------------------------------------------------------
 def update_graph(dropdown_mun):
     url = 'https://brasil.io/api/dataset/covid19/caso/data/?city=' + dropdown_mun + '&format=json'
     url_data = requests.get(url).content
@@ -417,7 +532,7 @@ def update_graph_prev_conf(dropdown_prev_conf):
         title='Previsão confirmados',
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         ),
@@ -502,7 +617,7 @@ def update_graph_prev_conf(dropdown_prev_conf):
     layout = dict(
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         )
@@ -615,7 +730,7 @@ def update_graph_prev_death(dropdown_prev_death):
         title='Previsão óbitos',
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         ),
@@ -700,7 +815,7 @@ def update_graph_prev_death(dropdown_prev_death):
     layout = dict(
         showlegend=False,
         #width=figsize[0],
-        height=700,
+        #height=700,
         yaxis=dict(
             title=ylabel
         )
@@ -716,7 +831,7 @@ def update_graph_prev_death(dropdown_prev_death):
     props['xaxis'].pop('type')
     layout = go.Layout(
         #width=figsize[0],
-        height=700,
+        #height=700,
         showlegend=False,
         xaxis=props['xaxis'],
         yaxis=dict(title='Sazonalidade')
@@ -730,4 +845,4 @@ def update_graph_prev_death(dropdown_prev_death):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()

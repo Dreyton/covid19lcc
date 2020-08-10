@@ -1,20 +1,40 @@
 .banner {
-    height: 75px;
-    margin: 0px -10px 10px;
+    
     background-color: rgb(245, 245, 245);
     border-radius: 2px;
+    position:relative;
+    display: flex;
+    padding:1em 1em 1em 1em
 }
 
-.banner h2{
+.title{
     color: black;
     padding-top: 10px;
     margin-left: 2%;
-    display: inline-block;
+    align-self:flex-start;
+    margin-top:6em
 }
 
-.banner Img{
-    position: relative;
+.logo Img{
     float: right;
-    right: 10px;
-    height: 75px;
+    align-self:flex-end;
+    height: auto;
+    width:100%;
+    max-width: 400px;
+}
+
+
+.grid {
+   
+    display: flex; /* or inline-flex */
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content:space-evenly;
+    width: 100%;
+  }
+
+.cell{
+    text-align: center;
+    display: block;
+    margin: 1rem;
 }
